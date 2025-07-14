@@ -1,10 +1,15 @@
-import mongoose from "mongoose";
+const mongoose = require('mongoose');
 
 const listingSchema = new mongoose.Schema({
   title: String,
+  description: String,
   price: Number,
-  image: String,
   location: String,
+  contact: String,
+  createdAt: {
+    type: Date,
+    default: Date.now,
+  },
 });
 
-export default mongoose.model("Listing", listingSchema);
+module.exports = mongoose.model('Listing', listingSchema);

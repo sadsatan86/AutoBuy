@@ -1,27 +1,30 @@
-import express from "express";
-import mongoose from "mongoose";
-import cors from "cors";
-import dotenv from "dotenv";
-import Listing from "./models/Listing.js";
+const express = require('express');
+const mongoose = require('mongoose');
+const cors = require('cors');
+require('dotenv').config();
 
-dotenv.config();
 const app = express();
+const PORT = process.env.PORT || 5000;
+
+// Middlewares
 app.use(cors());
 app.use(express.json());
 
-mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
+// Connect to MongoDB
+mongoose.connect(process.env.MONGO_URI)
   .then(() => console.log("MongoDB connected"))
-  .catch(console.error);
+  .catch(err => console.error("MongoDB error:", err));
 
-app.get("/api/listings", async (req, res) => {
-  const listings = await Listing.find();
-  res.json(listings);
+// Define a basic route
+app.get('/', (req, res) => {
+  res.send('AutoBuy backend is alive!');
 });
 
-app.post("/api/listings", async (req, res) => {
-  const listing = new Listing(req.body);
-  await listing.save();
-  res.json({ message: "Listing saved" });
-});
+// Routes
+const listingsRouter = require('./routes/listings');
+app.use('/api/listings', listingsRouter);
 
-app.listen(5000, () => console.log("Server running on port 5000"));
+// Start the server
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});
